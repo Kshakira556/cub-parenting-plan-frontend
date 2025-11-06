@@ -1,8 +1,9 @@
 // src/services/visitsService.ts
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+import { authFetch } from "../utils/api";
 
 export const getVisitsByPlan = async (plan_id: string) => {
-  const res = await fetch(`${API_URL}/visits/plan/${plan_id}`);
+  const res = await authFetch(`${API_URL}/visits/plan/${plan_id}`);
   if (!res.ok) throw new Error("Failed to fetch visits");
   const data = await res.json();
   return data.visits;
@@ -17,7 +18,7 @@ export const addVisit = async (visit: {
   location: string;
   notes?: string;
 }) => {
-  const res = await fetch(`${API_URL}/visits`, {
+  const res = await authFetch(`${API_URL}/visits`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(visit),

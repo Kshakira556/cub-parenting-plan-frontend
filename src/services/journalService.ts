@@ -1,8 +1,9 @@
 // src/services/journalService.ts
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+import { authFetch } from "../utils/api";
 
 export const getJournalByChild = async (child_id: string) => {
-  const res = await fetch(`${API_URL}/journal/child/${child_id}`);
+  const res = await authFetch(`${API_URL}/journal/child/${child_id}`);
   if (!res.ok) throw new Error("Failed to fetch journal entries");
   const data = await res.json();
   return data.entries;
@@ -14,7 +15,7 @@ export const createJournalEntry = async (entry: {
   content: string;
   entry_date: string;
 }) => {
-  const res = await fetch(`${API_URL}/journal`, {
+  const res = await authFetch(`${API_URL}/journal`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(entry),

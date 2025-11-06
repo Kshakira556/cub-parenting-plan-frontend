@@ -1,8 +1,9 @@
-// src/routes/AppRoutes.tsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import type { ReactNode } from "react";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
+import Children from "../pages/Children"; 
 import Dashboard from "../pages/Dashboard";
 import Visits from "../pages/Visits";
 import Messages from "../pages/Messages";
@@ -20,6 +21,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} /> 
 
       {/* Protected routes */}
       <Route
@@ -27,6 +29,7 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Dashboard />
+            <Children />
           </ProtectedRoute>
         }
       />

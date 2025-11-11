@@ -1,8 +1,8 @@
-// src/pages/Children.tsx
 import { useEffect, useState } from "react";
 import type { Child } from "../services/childrenService"; 
 import { getChildren, createChild } from "../services/childrenService";
 import { useAuth } from "../context/AuthContext";
+import { formatDate } from "../utils/dateFormatter";
 
 const ChildrenPage = () => {
   const [children, setChildren] = useState<Child[]>([]);
@@ -101,7 +101,7 @@ const ChildrenPage = () => {
           {children.map((child) => (
             <li key={child.id} className="p-2 border rounded flex justify-between">
               <span>
-                {child.full_name} — {new Date(child.date_of_birth).toLocaleDateString()}
+                {child.full_name} — {formatDate(child.date_of_birth)}
               </span>
             </li>
           ))}

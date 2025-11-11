@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -29,6 +28,7 @@ const Navbar = () => {
             <Link to="/children" className="text-gray-700 hover:text-blue-600">
               Children
             </Link>
+            <Link to="/plans" className="text-gray-700 hover:text-blue-600">Plans</Link>
             <button
               onClick={logout}
               className="text-gray-700 hover:text-red-600"

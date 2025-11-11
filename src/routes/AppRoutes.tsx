@@ -9,8 +9,8 @@ import Visits from "../pages/Visits";
 import Messages from "../pages/Messages";
 import Journal from "../pages/Journal";
 import { useAuth } from "../context/AuthContext";
+import Plans from "../pages/Plans";
 
-// Protected route wrapper
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   return <>{user ? children : <Navigate to="/login" replace />}</>;
@@ -30,6 +30,7 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <Dashboard />
             <Children />
+            <Plans />
           </ProtectedRoute>
         }
       />

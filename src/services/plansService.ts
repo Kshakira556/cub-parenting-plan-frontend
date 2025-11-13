@@ -1,20 +1,10 @@
+// src/services/plansService.ts
 import { authFetch } from "../utils/api";
-
-export type ParentingPlan = {
-  id: string;
-  title: string;
-  description?: string;
-  start_date?: string;
-  end_date?: string;
-  status: "active" | "draft" | "archived";
-  created_by: string;
-  created_at: string;
-  updated_at?: string;
-};
+import type { ParentingPlan, GetPlansResponse, CreatePlanResponse } from "../types/api";
 
 export const getPlans = async (): Promise<ParentingPlan[]> => {
-  const data = await authFetch("/plans");
-  return data.plans; 
+  const data = await authFetch<GetPlansResponse>("/plans");
+  return data.plans;
 };
 
 export const createPlan = async (plan: {
@@ -25,9 +15,9 @@ export const createPlan = async (plan: {
   status?: "active" | "draft" | "archived";
   created_by: string;
 }): Promise<ParentingPlan> => {
-  const data = await authFetch("/plans", {
+  const data = await authFetch<CreatePlanResponse>("/plans", {
     method: "POST",
     body: JSON.stringify(plan),
   });
-  return data.plan; 
+  return data.plan;
 };

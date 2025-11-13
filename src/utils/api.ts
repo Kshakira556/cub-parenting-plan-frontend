@@ -1,6 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
-export const authFetch = async (url: string, options: RequestInit = {}) => {
+export const authFetch = async <T = unknown>(
+  url: string,
+  options: RequestInit = {}
+): Promise<T> => {
   const token = localStorage.getItem("token");
   const headers = {
     "Content-Type": "application/json",
@@ -15,5 +18,6 @@ export const authFetch = async (url: string, options: RequestInit = {}) => {
     throw new Error(text || res.statusText);
   }
 
-  return res.json();
+  const data: T = await res.json();
+  return data;
 };

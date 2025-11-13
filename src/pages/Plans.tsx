@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getPlans, createPlan, type ParentingPlan } from "../services/plansService";
+import { type ParentingPlan } from "../types/api";
+import { getPlans, createPlan } from "../services/plansService";
 import { useAuth } from "../context/AuthContext";
 
 const Plans = () => {

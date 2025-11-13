@@ -14,19 +14,19 @@ const Navbar = () => {
         {user && (
           <>
             <Link to="/dashboard" className="text-gray-700 hover:text-blue-600">
-              Dashboard
+              Dashboard 
             </Link>
             <Link to="/visits" className="text-gray-700 hover:text-blue-600">
-              Visits
+              Visits 
             </Link>
             <Link to="/messages" className="text-gray-700 hover:text-blue-600">
-              Messages
+              Messages 
             </Link>
             <Link to="/journal" className="text-gray-700 hover:text-blue-600">
-              Journal
+              Journal 
             </Link>
             <Link to="/children" className="text-gray-700 hover:text-blue-600">
-              Children
+              Children 
             </Link>
             <Link to="/plans" className="text-gray-700 hover:text-blue-600">Plans</Link>
             <button

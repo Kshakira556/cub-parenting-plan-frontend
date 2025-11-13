@@ -1,25 +1,22 @@
+// src/services/childrenService.ts
 import { authFetch } from "../utils/api";
+import type { Child, GetChildrenResponse, CreateChildResponse } from "../types/api";
 
-export type Child = {
-  id: string;
-  full_name: string;
-  date_of_birth: string;
-  parent_id: string;
-};
-
+// Fetch all children
 export const getChildren = async (): Promise<Child[]> => {
-  const data = await authFetch("/children");
+  const data = await authFetch<GetChildrenResponse>("/children");
   return data.children; // backend returns { children: Child[] }
 };
 
+// Create a new child
 export const createChild = async (child: {
-  full_name: string;
-  date_of_birth: string;
+  first_name: string;
+  birth_date: string;
   parent_id: string;
 }): Promise<Child> => {
-  const newChild = await authFetch("/children", {
+  const data = await authFetch<CreateChildResponse>("/children", {
     method: "POST",
     body: JSON.stringify(child),
   });
-  return newChild.child; 
+  return data.child;
 };

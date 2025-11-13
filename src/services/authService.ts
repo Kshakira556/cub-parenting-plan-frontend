@@ -1,27 +1,25 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 import { authFetch } from "../utils/api";
+import type { LoginResponse, RegisterResponse, APIError } from "../types/api";
 
-export const login = async (email: string, password: string) => {
-  const res = await authFetch(`${API_URL}/auth/login`, {
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
+  return authFetch<LoginResponse>("/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  return res; 
 };
 
 export const register = async (
   full_name: string,
   email: string,
   password: string,
-  role: string
-) => {
-  const validRoles = ["parent", "mediator", "admin"];
-  if (!validRoles.includes(role)) {
+  role: "parent" | "mediator" | "admin"
+): Promise<RegisterResponse> => {
+  if (!["parent", "mediator", "admin"].includes(role)) {
     throw new Error("Invalid role. Must be parent, mediator, or admin.");
   }
 
-  const res = await fetch(`${API_URL}/users/register`, {
+  const res = await fetch("/api/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ full_name, email, password, role }),
@@ -30,19 +28,17 @@ export const register = async (
   if (!res.ok) {
     let message = "Registration failed";
     try {
-      const errorData = await res.json();
-      if (errorData?.issues && Array.isArray(errorData.issues)) {
-        message = errorData.issues
-          .map((i: { message: string }) => i.message)
-          .join(", ");
-      } else if (errorData?.message) {
-        message = errorData.message;
+      const data: APIError = await res.json();
+      if (data?.issues?.length) {
+        message = data.issues.map(i => i.message).join(", ");
+      } else if (data?.message) {
+        message = data.message;
       }
     } catch {
-      // ignore parsing error
+      // ignore
     }
     throw new Error(message);
   }
 
-  return res.json(); 
+  return res.json();
 };

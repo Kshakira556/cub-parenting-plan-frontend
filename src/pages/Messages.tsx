@@ -1,20 +1,9 @@
 import { useEffect, useState } from "react";
 import { getMessagesByPlan, sendMessage } from "../services/messagesService";
-import { getPlans, type ParentingPlan } from "../services/plansService";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/dateFormatter";
-
-type Message = {
-  id: string;
-  sender_id: string;
-  receiver_id: string;
-  plan_id: string;
-  content: string;
-  created_at: string;
-  is_flagged: boolean;
-  flagged_reason?: string | null;
-  is_deleted: boolean;
-};
+import { getPlans } from "../services/plansService";
+import type { ParentingPlan, Message as MessageType } from "../types/api";
 
 const Messages = () => {
   const { user } = useAuth();
@@ -22,7 +11,7 @@ const Messages = () => {
   const [plans, setPlans] = useState<ParentingPlan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<string>("");
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
   const [messageContent, setMessageContent] = useState("");
 
   const [loading, setLoading] = useState(false);

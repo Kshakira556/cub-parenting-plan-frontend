@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
-import type { Child } from "../services/childrenService"; 
+import type { Child } from "../types/api"; 
 import { getChildren, createChild } from "../services/childrenService";
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/dateFormatter";
 
 const ChildrenPage = () => {
   const [children, setChildren] = useState<Child[]>([]);
-  const [fullName, setFullName] = useState("");
-  const [dob, setDob] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  // Fetch all children
   const fetchChildren = async () => {
     try {
       const data = await getChildren();
@@ -27,18 +26,23 @@ const ChildrenPage = () => {
     fetchChildren();
   }, []);
 
-  // Add a new child
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-        if (!user) throw new Error("User not logged in");
-      const newChild = await createChild({ full_name: fullName, date_of_birth: dob, parent_id: user.id, }); 
+      if (!user) throw new Error("User not logged in");
+
+      const newChild = await createChild({
+        first_name: firstName,
+        birth_date: birthDate,
+        parent_id: user.id,
+      });
+
       setChildren((prev) => [...prev, newChild]);
-      setFullName("");
-      setDob("");
+      setFirstName("");
+      setBirthDate("");
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message);
       else setError("Failed to add child");
@@ -55,29 +59,25 @@ const ChildrenPage = () => {
 
       <form onSubmit={handleSubmit} className="mb-6 flex gap-2 flex-wrap">
         <div className="flex flex-col">
-          <label htmlFor="fullName" className="sr-only">
-            Full Name
-          </label>
+          <label htmlFor="firstName" className="sr-only">First Name</label>
           <input
-            id="fullName"
+            id="firstName"
             type="text"
-            placeholder="Full Name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             className="p-2 border rounded"
             required
           />
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="dob" className="sr-only">
-            Date of Birth
-          </label>
+          <label htmlFor="birthDate" className="sr-only">Date of Birth</label>
           <input
-            id="dob"
+            id="birthDate"
             type="date"
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
             className="p-2 border rounded"
             required
           />
@@ -88,7 +88,7 @@ const ChildrenPage = () => {
           className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          disabled={loading}
+          disabled={loading || !user}
         >
           {loading ? "Adding..." : "Add Child"}
         </button>
@@ -101,7 +101,7 @@ const ChildrenPage = () => {
           {children.map((child) => (
             <li key={child.id} className="p-2 border rounded flex justify-between">
               <span>
-                {child.full_name} — {formatDate(child.date_of_birth)}
+                {child.first_name} — {formatDate(child.birth_date)}
               </span>
             </li>
           ))}

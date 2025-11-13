@@ -1,21 +1,8 @@
 import { useEffect, useState } from "react";
 import { getVisitsByPlan } from "../services/visitsService";
 import { getPlans } from "../services/plansService";
-import type { ParentingPlan } from "../services/plansService";
+import type { ParentingPlan, Visit } from "../types/api";
 import { formatDate } from "../utils/dateFormatter";
-
-type Visit = {
-  id: string;
-  plan_id: string;
-  child_id: string;
-  parent_id: string;
-  start_time: string;
-  end_time: string;
-  location: string;
-  notes?: string;
-  created_at: string;
-  updated_at?: string;
-};
 
 const Visits = () => {
   const [plans, setPlans] = useState<ParentingPlan[]>([]);
@@ -24,21 +11,19 @@ const Visits = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load plans on page load
   const fetchPlans = async () => {
     try {
       const data = await getPlans();
       setPlans(data);
 
       if (data.length > 0) {
-        setSelectedPlan(data[0].id); // auto-select first plan
+        setSelectedPlan(data[0].id); 
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load plans");
     }
   };
 
-  // Load visits when selectedPlan changes
   const fetchVisits = async (planId: string) => {
     try {
       setLoading(true);

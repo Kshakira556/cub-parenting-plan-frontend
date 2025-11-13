@@ -1,19 +1,9 @@
 import { useEffect, useState } from "react";
 import { getJournalByChild, createJournalEntry } from "../services/journalService";
-import { getChildren, type Child } from "../services/childrenService";
+import { getChildren } from "../services/childrenService";
+import type { Child, JournalEntry as JournalEntryType } from "../types/api"; 
 import { useAuth } from "../context/AuthContext";
 import { formatDate } from "../utils/dateFormatter";
-
-type JournalEntry = {
-  id: string;
-  child_id: string;
-  plan_id?: string | null;
-  author_id: string;
-  entry_date: string;
-  content?: string;
-  created_at: string;
-  updated_at?: string;
-};
 
 const Journal = () => {
   const { user } = useAuth();
@@ -21,7 +11,7 @@ const Journal = () => {
   const [children, setChildren] = useState<Child[]>([]);
   const [selectedChild, setSelectedChild] = useState<string>("");
 
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [entries, setEntries] = useState<JournalEntryType[]>([]);
   const [content, setContent] = useState("");
   const [entryDate, setEntryDate] = useState("");
 

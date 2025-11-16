@@ -49,6 +49,8 @@ export type ParentingPlan = {
   created_by: string;
   created_at: string;
   updated_at?: string | null;
+  invites?: PlanInvite[];
+  children?: Child[];
 };
 
 export type GetPlansResponse = {
@@ -57,6 +59,38 @@ export type GetPlansResponse = {
 
 export type CreatePlanResponse = {
   plan: ParentingPlan;
+};
+
+// **Added: payload type for creating a plan**
+export type CreatePlanPayload = {
+  title: string;
+  description?: string;
+  start_date?: string;
+  end_date?: string;
+  status?: "active" | "draft" | "archived";
+  created_by: string;
+  child_ids?: string[]; // <-- this allows multi-child selection
+};
+
+// ================= Parenting Plan Invites =================
+export type PlanInvite = {
+  id: string;
+  plan_id: string;
+  email: string;
+  status: "pending" | "accepted";
+  created_at: string;
+};
+
+export type CreatePlanInviteResponse = {
+  invite: PlanInvite;
+};
+
+export type AcceptPlanInvitePayload = {
+  invite_id: string;
+};
+
+export type AcceptPlanInviteResponse = {
+  invite: PlanInvite;
 };
 
 // ================= Visits =================

@@ -5,6 +5,11 @@ import { formatDate } from "../utils/dateFormatter";
 import { getPlans } from "../services/plansService";
 import type { ParentingPlan, Message as MessageType } from "../types/api";
 
+// Import reusable form components
+import TextInput from "../components/TextInput";
+import FormButton from "../components/FormButton";
+import Select from "../components/Select";
+
 const Messages = () => {
   const { user } = useAuth();
 
@@ -23,10 +28,7 @@ const Messages = () => {
       const data = await getPlans();
       setPlans(data);
 
-      // Auto-select first plan
-      if (data.length > 0) {
-        setSelectedPlan(data[0].id);
-      }
+      if (data.length > 0) setSelectedPlan(data[0].id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load plans");
     }
@@ -50,26 +52,21 @@ const Messages = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedPlan) {
-      fetchMessages(selectedPlan);
-    }
+    if (selectedPlan) fetchMessages(selectedPlan);
   }, [selectedPlan]);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-    if (!selectedPlan) return;
+    if (!user || !selectedPlan) return;
 
     try {
       setLoading(true);
-
       const newMessage = await sendMessage({
         sender_id: user.id,
         receiver_id: user.id, // TODO: update when users can message each other
         plan_id: selectedPlan,
         content: messageContent,
       });
-
       setMessages((prev) => [...prev, newMessage]);
       setMessageContent("");
     } catch (err) {
@@ -87,18 +84,18 @@ const Messages = () => {
 
       {/* PLAN SELECTOR */}
       <label htmlFor="plan" className="sr-only">Select Plan</label>
-      <select
+      <Select
         id="plan"
-        className="p-2 border rounded w-full mb-4"
         value={selectedPlan}
         onChange={(e) => setSelectedPlan(e.target.value)}
+        className="mb-4"
       >
         {plans.map((p) => (
           <option key={p.id} value={p.id}>
             {p.title} — {p.status}
           </option>
         ))}
-      </select>
+      </Select>
 
       {/* MESSAGE LIST */}
       {messages.length === 0 ? (
@@ -107,9 +104,7 @@ const Messages = () => {
         <ul className="space-y-2 mb-6">
           {messages.map((msg) => (
             <li key={msg.id} className="p-2 border rounded">
-              <div className="text-sm text-gray-500">
-                {formatDate(msg.created_at)}
-              </div>
+              <div className="text-sm text-gray-500">{formatDate(msg.created_at)}</div>
               <div>{msg.content}</div>
             </li>
           ))}
@@ -118,25 +113,16 @@ const Messages = () => {
 
       {/* SEND MESSAGE */}
       <form onSubmit={handleSend} className="flex gap-2">
-        <label htmlFor="message" className="sr-only">Message</label>
-        <input
+        <TextInput
           id="message"
-          className="p-2 border rounded flex-1"
           placeholder="Type a message..."
           value={messageContent}
           onChange={(e) => setMessageContent(e.target.value)}
           required
         />
-
-        <button
-          type="submit"
-          className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={loading}
-        >
+        <FormButton type="submit" loading={loading}>
           Send
-        </button>
+        </FormButton>
       </form>
     </div>
   );

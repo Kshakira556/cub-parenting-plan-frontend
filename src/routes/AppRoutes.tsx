@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import type { ReactNode } from "react";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
@@ -8,12 +8,15 @@ import Dashboard from "../pages/Dashboard";
 import Visits from "../pages/Visits";
 import Messages from "../pages/Messages";
 import Journal from "../pages/Journal";
-import { useAuth } from "../context/AuthContext";
 import Plans from "../pages/Plans";
+import NotFound from "../pages/NotFound";
+import { useAuth } from "../context/AuthContext";
 
-const ProtectedRoute = ({ children }: { children: ReactNode }) => {
+// Single ProtectedRoute wrapper for multiple routes
+const ProtectedRoute = ({ children }: { children?: ReactNode }) => {
   const { user } = useAuth();
-  return <>{user ? children : <Navigate to="/login" replace />}</>;
+  if (!user) return <Navigate to="/login" replace />;
+  return children ? <>{children}</> : <Outlet />;
 };
 
 const AppRoutes = () => {
@@ -21,46 +24,20 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} /> 
+      <Route path="/register" element={<Register />} />
 
-      {/* Protected routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-            <Children />
-            <Plans />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/visits"
-        element={
-          <ProtectedRoute>
-            <Visits />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/messages"
-        element={
-          <ProtectedRoute>
-            <Messages />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/journal"
-        element={
-          <ProtectedRoute>
-            <Journal />
-          </ProtectedRoute>
-        }
-      />
+      {/* Protected routes group */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/children" element={<Children />} />
+        <Route path="/plans" element={<Plans />} />
+        <Route path="/visits" element={<Visits />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/journal" element={<Journal />} />
+      </Route>
 
-      {/* Catch-all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Catch-all 404 */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

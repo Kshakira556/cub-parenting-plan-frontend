@@ -1,4 +1,3 @@
-// src/App.tsx
 import AppRoutes from "./routes/AppRoutes";
 import MainLayout from "./layout/MainLayout";
 

@@ -3,6 +3,7 @@ import { getVisitsByPlan } from "../services/visitsService";
 import { getPlans } from "../services/plansService";
 import type { ParentingPlan, Visit } from "../types/api";
 import { formatDate } from "../utils/dateFormatter";
+import Select from "../components/Select";
 
 const Visits = () => {
   const [plans, setPlans] = useState<ParentingPlan[]>([]);
@@ -15,10 +16,7 @@ const Visits = () => {
     try {
       const data = await getPlans();
       setPlans(data);
-
-      if (data.length > 0) {
-        setSelectedPlan(data[0].id); 
-      }
+      if (data.length > 0) setSelectedPlan(data[0].id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load plans");
     }
@@ -41,32 +39,31 @@ const Visits = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedPlan) {
-      fetchVisits(selectedPlan);
-    }
+    if (selectedPlan) fetchVisits(selectedPlan);
   }, [selectedPlan]);
 
   return (
     <div className="max-w-3xl mx-auto mt-12 p-6 bg-white rounded shadow">
       <h1 className="text-3xl font-bold mb-6">Visits</h1>
 
-      {/* Plan selector */}
-      <label htmlFor="plan" className="sr-only">Select Plan</label>
-      <select
+      {error && <p className="text-red-600 mb-4">{error}</p>}
+
+      {/* PLAN SELECTOR */}
+      <Select
         id="plan"
-        className="p-2 border rounded w-full mb-4"
         value={selectedPlan}
         onChange={(e) => setSelectedPlan(e.target.value)}
+        className="mb-4"
       >
         {plans.map((p) => (
           <option key={p.id} value={p.id}>
             {p.title} — {p.status}
           </option>
         ))}
-      </select>
+      </Select>
 
+      {/* VISIT LIST */}
       {loading && <p>Loading visits...</p>}
-      {error && <p className="text-red-600">{error}</p>}
 
       {visits.length === 0 ? (
         <p>No visits for this plan.</p>
@@ -74,12 +71,8 @@ const Visits = () => {
         <ul className="space-y-2">
           {visits.map((v) => (
             <li key={v.id} className="p-2 border rounded">
-              <strong>{formatDate(v.start_time)}</strong>
-              {" — "}
-              {formatDate(v.end_time)}
-              <div className="text-sm text-gray-600">
-                Location: {v.location}
-              </div>
+              <strong>{formatDate(v.start_time)}</strong> — {formatDate(v.end_time)}
+              <div className="text-sm text-gray-600">Location: {v.location}</div>
             </li>
           ))}
         </ul>

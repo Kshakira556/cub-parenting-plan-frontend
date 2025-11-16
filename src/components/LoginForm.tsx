@@ -14,12 +14,21 @@ const LoginForm = ({ className = "" }: LoginFormProps) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const validateForm = (): string | null => {
+    if (!email.trim()) return "Email is required.";
+    if (!password) return "Password is required.";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) return "Please enter a valid email address.";
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!email.trim() || !password) {
-      setError("Please enter email and password.");
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -41,12 +50,13 @@ const LoginForm = ({ className = "" }: LoginFormProps) => {
       className={`flex flex-col gap-4 max-w-md mx-auto mt-12 p-6 bg-white rounded shadow ${className}`}
     >
       <h2 className="text-2xl font-bold text-center">Login</h2>
-      {error && <p className="text-red-600">{error}</p>}
+
+      {error && <p className="text-red-600 text-center">{error}</p>}
 
       <input
         type="email"
         placeholder="Email"
-        className="p-2 border rounded"
+        className="p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
@@ -55,7 +65,7 @@ const LoginForm = ({ className = "" }: LoginFormProps) => {
       <input
         type="password"
         placeholder="Password"
-        className="p-2 border rounded"
+        className="p-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         required

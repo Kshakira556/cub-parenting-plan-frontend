@@ -1,6 +1,8 @@
 import { authFetch } from "../utils/api";
 import type { LoginResponse, RegisterResponse, APIError } from "../types/api";
 
+const BASE_URL = import.meta.env.VITE_API_URL; 
+
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   return authFetch<LoginResponse>("/auth/login", {
     method: "POST",
@@ -19,7 +21,7 @@ export const register = async (
     throw new Error("Invalid role. Must be parent, mediator, or admin.");
   }
 
-  const res = await fetch("/api/auth/register", {
+  const res = await fetch(`${BASE_URL}/users/register`, { // <— note /users/register
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ full_name, email, password, role }),
